@@ -1,0 +1,12 @@
+__pycache__
+.env
+.history
+.hypothesis/
+build/
+reports/
+witness
+proof.json
+*.key
+*.wtns
+zokrates/*
+!zokrates/*.zok

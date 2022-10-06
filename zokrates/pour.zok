@@ -1,0 +1,32 @@
+import "hashes/sha256/512bitPadded" as sha256;
+import "hashes/sha256/1024bitPadded" as sha256_1024;
+import "utils/casts/u32_to_bits" as u32_to_bits;
+const u32 DEPTH = 8;
+
+def select(bool condition, u32[8] left, u32[8] right) -> (u32[8], u32[8]) {
+	return (condition ? right : left, condition ? left : right);
+}
+
+def MerkleBranch(u32[8] root, u32[DEPTH][8] branch, bool[DEPTH] sel, u32[16] data) -> bool{
+    u32[8] mut digest = sha256(data[0..8], data[8..16]);
+    for u32 i in 0..DEPTH {
+        (u32[8], u32[8]) s = select(sel[i], digest, branch[i]);
+        digest = sha256(s.0, s.1);
+    }
+    return root == digest;
+}
+
+def main(u32[8] root, u32[8] sn, u32[8] p1, u32[8] coin1_, u32[8] p2, u32[8] coin2_, \
+        private u32[8] pk, private u32[8] sk, \
+        private u32[DEPTH][8] branch, private bool[DEPTH] sel, private u32[8] s, private u32 val, \
+        private u32[8] s1_, private u32 val1_, \
+        private u32[8] s2_, private u32 val2_) {
+    u32[8] zero = [0; 8];
+    assert(pk == sha256_1024(sk, zero, zero, zero));
+    assert(val == val1_ + val2_); // potential overflow
+    u32[8] coin = sha256(s, [0, 0, 0, 0, 0, 0, 0, val]);
+    assert(MerkleBranch(root, branch, sel, [...pk, ...coin]));
+    assert(sn == sha256_1024(sk, zero, pk, coin));
+    assert(coin1_ == sha256(s1_, [0, 0, 0, 0, 0, 0, 0, val1_]));
+    assert(coin2_ == sha256(s2_, [0, 0, 0, 0, 0, 0, 0, val2_]));
+}

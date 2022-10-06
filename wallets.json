@@ -1,0 +1,56 @@
+{
+    "siqi": {
+        "pk": "fe23dce958b01ca84e84729df5768940083ad6b670ce81e3230abd86ec2f1800",
+        "sk": "65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5",
+        "coins": [
+            {
+                "s": "929dfdb6c3788103c0618084883845bf4f2cf62f4049890b3ab50c5f1dad2068",
+                "val": 1000000,
+                "sel": 1
+            },
+            {
+                "s": "5f06ff0d141d6b1adcbc5bd9fa98c644098f6042ddc77fc1e82aed6804cf15cf",
+                "val": 1000000,
+                "sel": 2
+            }
+        ],
+        "spentcoins": [
+            "929dfdb6c3788103c0618084883845bf4f2cf62f4049890b3ab50c5f1dad2068",
+            "5f06ff0d141d6b1adcbc5bd9fa98c644098f6042ddc77fc1e82aed6804cf15cf"
+        ]
+    },
+    "alice": {
+        "pk": "f42e3a1b0af802a60db0ca975fdc106992a49e0d334a1d24506d708971b5d1c7",
+        "sk": "5ca5a4b3b2250f283873c1b67896f98e1938ccd278390ea44343c91eaba87894",
+        "coins": [
+            {
+                "s": "499affad358c77a0fd3be078b56ca460489655251ba249e9de7dc2c2333b6296",
+                "val": 600000,
+                "sel": 0
+            },
+            {
+                "s": "6b2013843b4ad9cff9a1fed5213e081c23ced744bfef1fb8599b31fb88b9f90a",
+                "val": 600000,
+                "sel": 0
+            }
+        ],
+        "spentcoins": []
+    },
+    "bob": {
+        "pk": "2d33984adc459a9998870a808a827681424297f917e881226d7daa3948a1241e",
+        "sk": "f53ff7bd5f6eaa15bdbe2b2febf22a479bf42ef3ad5a2cd292486abfb42697af",
+        "coins": [
+            {
+                "s": "499affad358c77a0fd3be078b56ca460489655251ba249e9de7dc2c2333b6296",
+                "val": 400000,
+                "sel": 0
+            },
+            {
+                "s": "6b2013843b4ad9cff9a1fed5213e081c23ced744bfef1fb8599b31fb88b9f90a",
+                "val": 400000,
+                "sel": 0
+            }
+        ],
+        "spentcoins": []
+    }
+}
