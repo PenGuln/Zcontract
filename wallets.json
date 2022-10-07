@@ -12,11 +12,22 @@
                 "s": "5f06ff0d141d6b1adcbc5bd9fa98c644098f6042ddc77fc1e82aed6804cf15cf",
                 "val": 1000000,
                 "sel": 2
+            },
+            {
+                "s": "971266ae6dd9552954d5e98bcd2d0279534022268570983f2c2eb7025fcc3f43",
+                "val": 1000000,
+                "sel": 0
+            },
+            {
+                "s": "04f70bb6eac3d05340013e1729eedcd4b249fda310fc82cb3be031f1692a0add",
+                "val": 1000000,
+                "sel": 1
             }
         ],
         "spentcoins": [
             "929dfdb6c3788103c0618084883845bf4f2cf62f4049890b3ab50c5f1dad2068",
-            "5f06ff0d141d6b1adcbc5bd9fa98c644098f6042ddc77fc1e82aed6804cf15cf"
+            "5f06ff0d141d6b1adcbc5bd9fa98c644098f6042ddc77fc1e82aed6804cf15cf",
+            "971266ae6dd9552954d5e98bcd2d0279534022268570983f2c2eb7025fcc3f43"
         ]
     },
     "alice": {
@@ -30,6 +41,11 @@
             },
             {
                 "s": "6b2013843b4ad9cff9a1fed5213e081c23ced744bfef1fb8599b31fb88b9f90a",
+                "val": 600000,
+                "sel": 0
+            },
+            {
+                "s": "c6bc4ea283c3b322737c6790a0b9ef63cac0e5f4e71c6e47f097684a21631c48",
                 "val": 600000,
                 "sel": 0
             }
@@ -47,6 +63,11 @@
             },
             {
                 "s": "6b2013843b4ad9cff9a1fed5213e081c23ced744bfef1fb8599b31fb88b9f90a",
+                "val": 400000,
+                "sel": 0
+            },
+            {
+                "s": "c6bc4ea283c3b322737c6790a0b9ef63cac0e5f4e71c6e47f097684a21631c48",
                 "val": 400000,
                 "sel": 0
             }

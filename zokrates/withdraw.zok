@@ -1,0 +1,8 @@
+import "hashes/sha256/512bitPadded" as sha256;
+import "hashes/sha256/1024bitPadded" as sha256_1024;
+import "utils/casts/u32_to_bits" as u32_to_bits;
+
+def main(u32[8] cm, u32[8] coin1_, private u32[8] s1_, private u32 val, private u32[8] s, private u32 indata) {
+    assert(cm == sha256(s, [0, 0, 0, 0, 0, 0, indata, val]));
+    assert(coin1_ == sha256(s1_, [0, 0, 0, 0, 0, 0, 0, val]));
+}

@@ -16,17 +16,14 @@ def MerkleBranch(u32[8] root, u32[DEPTH][8] branch, bool[DEPTH] sel, u32[16] dat
     return root == digest;
 }
 
-def main(u32[8] root, u32[8] sn, u32[8] coin1_, u32[8] coin2_, \
+def main(u32[8] root, u32[8] sn, u32[8] cm_, \
         private u32[8] pk, private u32[8] sk, \
         private u32[DEPTH][8] branch, private bool[DEPTH] sel, private u32[8] s, private u32 val, \
-        private u32[8] s1_, private u32 val1_, \
-        private u32[8] s2_, private u32 val2_) {
+        private u32[8] s_, private u32 indata) {
     u32[8] zero = [0; 8];
     assert(pk == sha256_1024(sk, zero, zero, zero));
-    assert(val == val1_ + val2_); // potential overflow
     u32[8] coin = sha256(s, [0, 0, 0, 0, 0, 0, 0, val]);
     assert(MerkleBranch(root, branch, sel, [...pk, ...coin]));
     assert(sn == sha256_1024(sk, zero, pk, coin));
-    assert(coin1_ == sha256(s1_, [0, 0, 0, 0, 0, 0, 0, val1_]));
-    assert(coin2_ == sha256(s2_, [0, 0, 0, 0, 0, 0, 0, val2_]));
+    assert(cm_ == sha256(s_, [0, 0, 0, 0, 0, 0, indata, val]));
 }

@@ -1,5 +1,3 @@
-from logging import root
-from sre_constants import BRANCH
 from brownie import Cash, Verifier, config
 from scripts.helpful_scripts import (
     get_account, 
@@ -143,5 +141,5 @@ def init_new_wallet(name: str):
         print("duplicate name")
 
 def main():
-    #mint("siqi", 1000000)
-    pour("siqi", "5f06ff0d141d6b1adcbc5bd9fa98c644098f6042ddc77fc1e82aed6804cf15cf", "alice", 600000, "bob", 400000)
+    mint("siqi", 1000000)
+    pour("siqi", "971266ae6dd9552954d5e98bcd2d0279534022268570983f2c2eb7025fcc3f43", "alice", 600000, "bob", 400000)
