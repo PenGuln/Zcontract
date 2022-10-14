@@ -1,77 +1,51 @@
 {
     "siqi": {
-        "pk": "fe23dce958b01ca84e84729df5768940083ad6b670ce81e3230abd86ec2f1800",
-        "sk": "65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5",
+        "pk": "88dbb8b2e1b5258b194e1e66d515615ea4c60c63f6e95af10b07b5bde5ca1c52",
+        "sk": "41c45c757cf939b058c5bfccab31f31bc8848619364cb5acf8bd15e70b9984dd",
+        "epk": [
+            2983617551792014768146968712390766240725061529288144701201443216879521890304,
+            2678449094952908322156435173201880046459596063206772359138020062034866995200,
+            7811834178409231860889403268620426021806520482792419800356457978805524365312,
+            13594426744964245533667542599297066085398911875204889172438778928364884328448
+        ],
+        "esk": "043d4e7e2550d0173dfdeb1035c5f1fa9fd703c36c8bc4e4a20c5e7d6b1a825d",
         "coins": [
             {
-                "s": "929dfdb6c3788103c0618084883845bf4f2cf62f4049890b3ab50c5f1dad2068",
-                "val": 1000000,
-                "sel": 1
-            },
-            {
-                "s": "5f06ff0d141d6b1adcbc5bd9fa98c644098f6042ddc77fc1e82aed6804cf15cf",
-                "val": 1000000,
-                "sel": 2
-            },
-            {
-                "s": "971266ae6dd9552954d5e98bcd2d0279534022268570983f2c2eb7025fcc3f43",
+                "s": "ade894422086835c7e4becc81e95591e2a58add88e9e539100abd494210d60e2",
                 "val": 1000000,
                 "sel": 0
             },
             {
-                "s": "04f70bb6eac3d05340013e1729eedcd4b249fda310fc82cb3be031f1692a0add",
-                "val": 1000000,
+                "s": "fecbc0c2312e19684c7106a09d90cf863b47f3f5ca4b6d5f0afa4e82374459e3",
+                "val": 600000,
                 "sel": 1
+            },
+            {
+                "s": "ade397f45871b857b747392e46e67103ff5d449340a4508d34b4b7de8fad17a7",
+                "val": 400000,
+                "sel": 2
             }
         ],
         "spentcoins": [
-            "929dfdb6c3788103c0618084883845bf4f2cf62f4049890b3ab50c5f1dad2068",
-            "5f06ff0d141d6b1adcbc5bd9fa98c644098f6042ddc77fc1e82aed6804cf15cf",
-            "971266ae6dd9552954d5e98bcd2d0279534022268570983f2c2eb7025fcc3f43"
+            "ade894422086835c7e4becc81e95591e2a58add88e9e539100abd494210d60e2",
+            "fecbc0c2312e19684c7106a09d90cf863b47f3f5ca4b6d5f0afa4e82374459e3",
+            "ade397f45871b857b747392e46e67103ff5d449340a4508d34b4b7de8fad17a7"
+        ],
+        "freezecoins": [
+            {
+                "in": 1,
+                "cm": "9e1f6e738c9b2702bdfa58f1ce26e8ff3a5928a2c629c3c0c806672a83cc6002",
+                "val": 600000,
+                "s": "1294baf117fd2449e3a889a980ccd86b29ec5fbe2db5deb2d11f6e51828eede6",
+                "k": "0f9881735dac42e10a7e0a95d0fa26ef"
+            },
+            {
+                "in": 2,
+                "cm": "a0a63b489d4e508d7db2bd30528e57de3a867943717f4bbb402b7679908f1863",
+                "val": 400000,
+                "s": "d54c2a8871db8d026c646859a53b16d7fa699247e3b8da2f8e6b7322bb31f4a0",
+                "k": "b6710091df47c314521fa30f02079dfb"
+            }
         ]
-    },
-    "alice": {
-        "pk": "f42e3a1b0af802a60db0ca975fdc106992a49e0d334a1d24506d708971b5d1c7",
-        "sk": "5ca5a4b3b2250f283873c1b67896f98e1938ccd278390ea44343c91eaba87894",
-        "coins": [
-            {
-                "s": "499affad358c77a0fd3be078b56ca460489655251ba249e9de7dc2c2333b6296",
-                "val": 600000,
-                "sel": 0
-            },
-            {
-                "s": "6b2013843b4ad9cff9a1fed5213e081c23ced744bfef1fb8599b31fb88b9f90a",
-                "val": 600000,
-                "sel": 0
-            },
-            {
-                "s": "c6bc4ea283c3b322737c6790a0b9ef63cac0e5f4e71c6e47f097684a21631c48",
-                "val": 600000,
-                "sel": 0
-            }
-        ],
-        "spentcoins": []
-    },
-    "bob": {
-        "pk": "2d33984adc459a9998870a808a827681424297f917e881226d7daa3948a1241e",
-        "sk": "f53ff7bd5f6eaa15bdbe2b2febf22a479bf42ef3ad5a2cd292486abfb42697af",
-        "coins": [
-            {
-                "s": "499affad358c77a0fd3be078b56ca460489655251ba249e9de7dc2c2333b6296",
-                "val": 400000,
-                "sel": 0
-            },
-            {
-                "s": "6b2013843b4ad9cff9a1fed5213e081c23ced744bfef1fb8599b31fb88b9f90a",
-                "val": 400000,
-                "sel": 0
-            },
-            {
-                "s": "c6bc4ea283c3b322737c6790a0b9ef63cac0e5f4e71c6e47f097684a21631c48",
-                "val": 400000,
-                "sel": 0
-            }
-        ],
-        "spentcoins": []
     }
 }

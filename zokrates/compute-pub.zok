@@ -1,0 +1,5 @@
+import "hashes/sha256/512bitPadded" as sha256;
+
+def main(u32[8] cm, u32 indata, u32 val, private u32[8] s) {
+    assert(cm == sha256(s, [0, 0, 0, 0, 0, 0, indata, val]));
+}

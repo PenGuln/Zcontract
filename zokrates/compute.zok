@@ -1,5 +1,69 @@
 import "hashes/sha256/512bitPadded" as sha256;
+import "hashes/sha256/1024bitPadded" as sha256_1024;
+import "utils/casts/u32_8_to_bool_256" as u32_to_bool;
+import "utils/pack/bool/unpack256" as unpack;
+import "utils/casts/bool_256_to_u32_8" as from_bits;
 
-def main(u32[8] cm, u32 indata, u32 val, private u32[8] s) {
-    assert(cm == sha256(s, [0, 0, 0, 0, 0, 0, indata, val]));
+def rotr32<N>(u32 x) -> u32 {
+    return (x >> N) | (x << (32 - N));
+}
+
+def rotl32<N>(u32 x) -> u32 {
+    return (x << N) | (x >> (32 - N));
+}
+
+def Speck<N>(u32[N][2] pt, u32[4] k) -> u32[N][2] {
+    u32[N][2] mut ct = pt;
+    for u32 i in 0..N {
+        u32 mut b = k[0];
+        u32[3] mut a = k[1..4];
+        for u32 j in 0..27 {
+            ct[i][1] = rotr32::<8>(ct[i][1]);
+            ct[i][1] = ct[i][1] + ct[i][0];
+            ct[i][1] = ct[i][1] ^ b;
+            ct[i][0] = rotl32::<3>(ct[i][0]);
+            ct[i][0] = ct[i][0] ^ ct[i][1];
+            a[j % 3] = rotr32::<8>(a[j % 3]);
+            a[j % 3] = a[j % 3] + b;
+            a[j % 3] = a[j % 3] ^ j;
+            b = rotl32::<3>(b);
+            b = b ^ a[j % 3];
+        }
+    }
+    return ct;
+}
+
+def mul(field[4] a, field[4] b) -> field[4] {
+    field[4] mut c = [0; 4];
+    for u32 i in 0..4 {
+        for u32 j in 0..4 {
+            c[(i + j) & 3] = c[(i + j) & 3] + ((i + j <= 3) ? (a[i] * b[j]) : (a[i] * b[j] * 1000000007));
+        }
+    }
+    return c;
+}
+
+def calcSymmetricKey(field[4] epk, u32[8] b) -> field[4] {
+    field[4] mut y = [1, 0, 0, 0];
+    field[4] mut x = epk;
+    bool[256] u = u32_to_bool(b);
+    for u32 q in 0..256 {
+        y = mul(y, u[255 - q] ? x : [1, 0, 0, 0]);
+        x = mul(x, x);
+    }
+    return y;
+}
+
+def main(field[4] epk, u32[8] cm, u32[8][2] ct, private u32 val, private u32 indata, private u32[4] k, private u32[8] s, private u32[8] b){ 
+    assert(cm == sha256(s, [0, 0, ...k, indata, val]));
+    //field pMinusOne = 21888242871839275222246405745257275088548364400416034343698204186575808495616;
+    //assert(0 - 1 == pMinusOne);
+    field[4] res = calcSymmetricKey(epk, b);
+    u32[8] a = from_bits(unpack(res[0]));
+    u32[8] b = from_bits(unpack(res[1]));
+    u32[8] c = from_bits(unpack(res[2]));
+    u32[8] d = from_bits(unpack(res[3]));
+    u32[8] r = sha256_1024(a, b, c, d);
+    u32[2] zero = [0, 0];
+    assert(ct == Speck::<8>([zero, s[0..2], s[2..4], s[4..6], s[6..8], k[0..2], k[2..4], [indata, val]], r[0..4]));
 }
