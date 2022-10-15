@@ -37,13 +37,13 @@ symmetric encryption: Speck (64/128, 27 rounds)
 
 #### Evaluation
 
-|  Primitives  | curcuit constraints | Time (field extension + speck) |
-|  ----  | ----  |  ----  |
-| mint | - |  |
-| pour | 1034450 |  |
-| freeze | 986435 |  |
-| compute | 163711 |  |
-| finalize | 231069 |  |
+|  Primitives  | curcuit constraints |
+|  ----  | ----  |
+| mint | - |
+| pour | 1034450 |
+| freeze | 986435 |
+| compute | 163711 |
+| finalize | 231069 |
 
 #### Future work
 
