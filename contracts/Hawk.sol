@@ -13,6 +13,7 @@ contract Hawk is Cash.Cashbase {
         bytes32 cm;
         bytes32 ctH;
         bytes32 ctL;
+        uint[4] epk;
     }
 
     uint constant DEPTH = 8;
@@ -27,7 +28,7 @@ contract Hawk is Cash.Cashbase {
     uint public cur;
     address public owner;
     address public manager;
-    bytes32[4] public epk;
+    uint[4] public epk;
     mapping(bytes32 => bool) public nullifier;
     Freezeitem[] public freezeCoins;
     bool public finalized;
@@ -39,7 +40,7 @@ contract Hawk is Cash.Cashbase {
         Cash.FinalizeVerifier _finalizeVerifier,
         Cash.WithdrawVerifier _withdrawVerifier,
         address _manager,
-        bytes32[4] memory _epk
+        uint[4] memory _epk
     ) {
         owner = msg.sender;
         pourVerifier = _pourVerifier;
@@ -105,6 +106,7 @@ contract Hawk is Cash.Cashbase {
     }
 
     function freeze(Cash.Proof memory proof, bytes32 p, bytes32 sn, bytes32 cm) external override{
+        require(freezeCoins.length < N);
         uint[32] memory input = [uint(0), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         bytes32 sub = bytes32(uint((1 << 32) - 1));
         bytes32 tmp = hashes[1];
@@ -126,19 +128,19 @@ contract Hawk is Cash.Cashbase {
         require(freezeVerifier.verifyTx(proof, input));
         require(!nullifier[sn]);
         nullifier[sn] = true;
-        freezeCoins.push(Freezeitem({p : p, cm : cm, ctH : 0, ctL : 0}));
+        freezeCoins.push(Freezeitem({p : p, cm : cm, ctH : 0, ctL : 0, epk : [uint(0), 0, 0, 0]}));
     }
-    function compute(Cash.Proof memory proof, bytes32 cm, bytes32[2] memory ct) external override{
+    function compute(Cash.Proof memory proof, bytes32 cm, bytes32[2] memory ct, uint[4] memory epk_user) external override{
         uint n = freezeCoins.length;
         uint x = n;
         for (uint i = 0; i < n; i++) {
             if (freezeCoins[i].cm == cm) {
                 x = i;
                 break;
-            } 
+            }
         }
         require(x < n, "no freeze cm found");
-        uint[28] memory input = [uint(epk[0]), uint(epk[1]), uint(epk[2]), uint(epk[3]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        uint[28] memory input = [epk[0], epk[1], epk[2], epk[3], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         bytes32 sub = bytes32(uint((1 << 32) - 1));
         bytes32 tmp = cm;
         for (uint i = 12; i > 4; i--) {
@@ -155,20 +157,25 @@ contract Hawk is Cash.Cashbase {
         require(computeVerifier.verifyTx(proof, input), "proof rejected");
         freezeCoins[x].ctH = ct[0];
         freezeCoins[x].ctL = ct[1];
+        freezeCoins[x].epk = epk_user;
     }
     
     function finalize(Cash.Proof memory proof, uint32 out, bytes32[2] memory coin, bytes32[2][2] memory ct) external override{
         require(msg.sender == manager);
         require(!finalized);
         require(freezeCoins.length >= N);
+        uint n = freezeCoins.length;
+        for (uint i = 0; i < n; i++) {
+            if (freezeCoins[i].ctH == 0 && freezeCoins[i].ctL == 0) freezeCoins[i].cm = bytes32(0);
+        }
         uint[65] memory input = [uint(0), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         bytes32 sub = bytes32(uint((1 << 32) - 1));
         input[0] = out;
-        bytes32 tmp = (freezeCoins[0].ctH == 0 && freezeCoins[0].ctL == 0) ? bytes32(0) : freezeCoins[0].cm;
+        bytes32 tmp = freezeCoins[0].cm;
         for (uint i = 9; i > 1; i--) {
             input[i - 1] = uint(tmp & sub); tmp >>= 32;
         }
-        tmp = (freezeCoins[1].ctH == 0 && freezeCoins[1].ctL == 0) ? bytes32(0) : freezeCoins[1].cm;
+        tmp = freezeCoins[1].cm;
         for (uint i = 17; i > 9; i--) {
             input[i - 1] = uint(tmp & sub); tmp >>= 32;
         }
@@ -202,6 +209,7 @@ contract Hawk is Cash.Cashbase {
             addCoin(freezeCoins[i].p, coin[i]);
             freezeCoins[i].ctH = ct[i][0];
             freezeCoins[i].ctL = ct[i][1];
+            freezeCoins[i].epk[0] = cur - 1;
         }
     }
 
@@ -248,8 +256,6 @@ contract Hawk is Cash.Cashbase {
         addCoin(p, coin);
     }*/
 
-   
-
     function getBranch(uint x) external view returns(bytes32[DEPTH] memory){
         require(x < cur);
         uint n = ((1 << DEPTH) + x);
@@ -259,6 +265,15 @@ contract Hawk is Cash.Cashbase {
             n >>= 1;
         }
         return res;
+    }
+
+    function getFreezeItem(uint x) external view returns(Freezeitem memory) {
+        require(x < freezeCoins.length);
+        return freezeCoins[x];
+    }
+
+    function getEpk() external view returns (uint[4] memory) {
+        return epk;
     }
     
 }

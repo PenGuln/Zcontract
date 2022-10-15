@@ -1,4 +1,3 @@
-from base64 import encode
 from brownie import Hawk
 from scripts.utils import (
     get_account, 
@@ -20,16 +19,16 @@ import hashlib
 import subprocess
 import json
 
-def init_new_wallet(name: str):
+def init_new_wallet(user: str):
     with open('.\wallets.json', 'r') as f:
         wallets = json.load(f)
     f.close()
 
-    if (not name in wallets):
+    if (not user in wallets):
         pk, sk = gen_key()
         _, esk = gen_key()
         epk = polyPow(H, int(esk, 16))
-        wallets[name] = {
+        wallets[user] = {
             "pk": pk,
             "sk": sk,
             "epk" : epk,
@@ -42,19 +41,19 @@ def init_new_wallet(name: str):
             json.dump(wallets, f)
         f.close()
     else:
-        print("duplicate name")
+        print("duplicate user")
 
-def clean_wallet(name : str):
+def clean_wallet(user : str):
     with open('.\wallets.json', 'r') as f:
         wallets = json.load(f)
     f.close()
 
-    if (name in wallets):
-        wallets[name] = {
-            "pk": wallets[name]["pk"],
-            "sk": wallets[name]["sk"],
-            "epk" : wallets[name]["epk"],
-            "esk" : wallets[name]["esk"],
+    if (user in wallets):
+        wallets[user] = {
+            "pk": wallets[user]["pk"],
+            "sk": wallets[user]["sk"],
+            "epk" : wallets[user]["epk"],
+            "esk" : wallets[user]["esk"],
             "coins": [],
             "spentcoins": [],
             "freezecoins" : []
@@ -63,7 +62,7 @@ def clean_wallet(name : str):
             json.dump(wallets, f)
         f.close()
     else:
-        print("name not found")
+        print("user not found")
 
 def pour_generate_proof(root, sn, coin1, coin2, 
                         pk, sk, 
@@ -125,18 +124,18 @@ def finalize_generate_proof(out, cm, coin_, ct, s, val, indata, k, s_):
     print("proof generated")
 
 
-def mint(name: str, value : int):
+def mint(user: str, value : int):
     with open('.\wallets.json', 'r') as f:
         wallets = json.load(f)
     f.close()
 
-    assert(name in wallets)
-    pk = wallets[name]['pk']
+    assert(user in wallets)
+    pk = wallets[user]['pk']
     s = rds()
     account = get_account()
     cash = Hawk[-1]
     tx = cash.mint(pk, s, {"from": account, "value": value})
-    wallets[name]["coins"].append({
+    wallets[user]["coins"].append({
         "s" : s,
         "val" : value,
         "sel": tx.return_value
@@ -148,16 +147,16 @@ def mint(name: str, value : int):
     return s
 
 
-def pour(name, s, name1, val1, name2, val2):
+def pour(user, s, user1, val1, user2, val2):
     with open('.\wallets.json', 'r') as f:
         wallets = json.load(f)
     f.close()
 
-    assert(name in wallets)
-    assert(name1 in wallets)
-    assert(name2 in wallets)
-    coins = wallets[name]['coins']
-    spentcoins = wallets[name]['spentcoins']
+    assert(user in wallets)
+    assert(user1 in wallets)
+    assert(user2 in wallets)
+    coins = wallets[user]['coins']
+    spentcoins = wallets[user]['spentcoins']
     flag = False
     for coin in coins:
         if (coin['s'] == s): 
@@ -173,10 +172,10 @@ def pour(name, s, name1, val1, name2, val2):
     root = cash.hashes(1).hex()
     branch = cash.getBranch(sel)
 
-    sk = wallets[name]['sk']
-    pk = wallets[name]['pk']
-    pk1 = wallets[name1]['pk']
-    pk2 = wallets[name2]['pk']
+    sk = wallets[user]['sk']
+    pk = wallets[user]['pk']
+    pk1 = wallets[user1]['pk']
+    pk2 = wallets[user2]['pk']
 
     coin = hashlib.sha256(encodePacked(s, int_to_hex(val))).hexdigest()
     s1 = rds()
@@ -193,14 +192,14 @@ def pour(name, s, name1, val1, name2, val2):
     with open('.\proof.json') as f:
         proof = json.load(f)
     tx = cash.pour(list(proof['proof'].values()), sn, pk1, coin1, pk2, coin2, {"from": account})
-    wallets[name]['spentcoins'].append(s)
-    wallets[name1]['coins'].append({
+    wallets[user]['spentcoins'].append(s)
+    wallets[user1]['coins'].append({
         "s" : s1,
         "val" : val1,
         "sel": cash.cur()-2 # need to be fixed
     })
 
-    wallets[name2]['coins'].append({
+    wallets[user2]['coins'].append({
         "s" : s2,
         "val" : val2,
         "sel": cash.cur()-1 # need to be fixed
@@ -212,14 +211,14 @@ def pour(name, s, name1, val1, name2, val2):
     return s1, s2
 
 
-def freeze(name, s, indata):
+def freeze(user, s, indata):
     with open('.\wallets.json', 'r') as f:
         wallets = json.load(f)
     f.close()
 
-    assert(name in wallets)
-    coins = wallets[name]['coins']
-    spentcoins = wallets[name]['spentcoins']
+    assert(user in wallets)
+    coins = wallets[user]['coins']
+    spentcoins = wallets[user]['spentcoins']
     flag = False
     for coin in coins:
         if (coin['s'] == s): 
@@ -234,8 +233,8 @@ def freeze(name, s, indata):
     root = cash.hashes(1).hex()
     branch = cash.getBranch(sel)
 
-    sk = wallets[name]['sk']
-    pk = wallets[name]['pk']
+    sk = wallets[user]['sk']
+    pk = wallets[user]['pk']
 
     coin = hashlib.sha256(encodePacked(s, int_to_hex(val))).hexdigest()
     s_ = rds()
@@ -247,8 +246,8 @@ def freeze(name, s, indata):
         proof = json.load(f)
     tx = cash.freeze(list(proof['proof'].values()), pk, sn, cm_, {"from": account})
 
-    wallets[name]['spentcoins'].append(s)
-    wallets[name]['freezecoins'].append({
+    wallets[user]['spentcoins'].append(s)
+    wallets[user]['freezecoins'].append({
         "in" : indata,
         "cm" : cm_,
         "val" : val,
@@ -260,13 +259,13 @@ def freeze(name, s, indata):
     f.close()
     return s_
 
-def compute(name, s, manager):
+def compute(user, s):
     with open('.\wallets.json', 'r') as f:
         wallets = json.load(f)
     f.close()
 
-    assert(name in wallets)
-    freezecoins = wallets[name]['freezecoins']
+    assert(user in wallets)
+    freezecoins = wallets[user]['freezecoins']
     flag = False
     for coin in freezecoins:
         if (coin['s'] == s): 
@@ -280,15 +279,15 @@ def compute(name, s, manager):
     account = get_account()
     cash = Hawk[-1]
     pt = int_to_hex(0) + int_to_hex(0) + s + k + int_to_hex(indata) + int_to_hex(val)
-    epk = wallets[manager]['epk']
-    k_ = calcKey(epk, wallets[name]['esk'])
-    ct = speck_enc(pt, k_) # symmetric encrypion
+    epk = list(cash.getEpk()) # fetch the manager's epk from smart contract
+    k_ = calcKey(epk, wallets[user]['esk'])
+    ct = speck_enc(pt, k_)    # symmetric encrypion
 
-    compute_generate_proof(epk, cm, ct, val, indata, k, s, wallets[name]['esk'])
+    compute_generate_proof(epk, cm, ct, val, indata, k, s, wallets[user]['esk'])
     with open('.\proof.json') as f:
         proof = json.load(f)
     
-    tx = cash.compute(list(proof['proof'].values()), cm, [ct[:64], ct[64:]], {"from": account})
+    tx = cash.compute(list(proof['proof'].values()), cm, [ct[:64], ct[64:]], wallets[user]['epk'], {"from": account})
 
 def finalize(manager):
     account = get_account()
@@ -302,15 +301,12 @@ def finalize(manager):
     with open('.\wallets.json', 'r') as f:
         wallets = json.load(f)
     f.close()
-
-    epk = wallets['siqi']['epk'] # should be stored in contract instead
-    k_ = calcKey(epk, wallets[manager]['esk'])
-
+   
     for i in range(2):
-        p, cmt, ctH, ctL = cash.freezeCoins(i)
-        pt = speck_dec((ctH + ctL).hex(), k_)
-        print(pt)
-        if (int.from_bytes(ctH, 'big') == 0 and int.from_bytes(ctL, 'big') == 0) : 
+        p, cmt, ctH, ctL, epk = cash.getFreezeItem(i)  # fetch the users' epk from smart contract (It's only avaliable for those called compute)
+        k_ = calcKey(list(epk), wallets[manager]['esk'])
+        pt = speck_dec((ctH + ctL).hex(), k_)  # symmetric decryption (speck)
+        if (int.from_bytes(ctH, 'big') == 0 and int.from_bytes(ctL, 'big') == 0) : # not called compute
             val.append(0)
             indata.append(0)
             k.append(0)
@@ -330,22 +326,65 @@ def finalize(manager):
     ct = []
     for i in range(2):
         rs = rds()
-        _s.append(rs)
-        _coin.append(hashlib.sha256(encodePacked(rs, int_to_hex(out_val[i]))).hexdigest())
-        ct.append(speck_enc(rs + int_to_hex(0) * 7 + int_to_hex(out_val[i]),  k[i]))  # symmetric encrypion
+        _s.append(rs)                                                                         # sample randomness
+        _coin.append(hashlib.sha256(encodePacked(rs, int_to_hex(out_val[i]))).hexdigest()) 
+        ct.append(speck_enc(rs + int_to_hex(0) * 7 + int_to_hex(out_val[i]),  k[i]))          # symmetric encrypion of the info of the new coin
 
     finalize_generate_proof(out, cm, _coin, ct, s, val, indata, k, _s)
     with open('.\proof.json') as f:
         proof = json.load(f)
     tx = cash.finalize(list(proof['proof'].values()), out, _coin, [[ct[0][:64], ct[0][64:]],[ct[1][:64], ct[1][64:]]], {"from": account})
-    
+
+def withdraw(user):
+    with open('.\wallets.json', 'r') as f:
+        wallets = json.load(f)
+    f.close()
+    assert(user in wallets)
+    cash = Hawk[-1]
+    for i in range(2):
+        pk = cash.getFreezeItem(i)[0].hex()
+        cm = cash.getFreezeItem(i)[1].hex()
+        flag = False
+        for coin in wallets[user]['freezecoins']:
+            if (coin['cm'] == cm): 
+                flag = True
+                k = coin['k']
+        if (flag):
+            ct = cash.getFreezeItem(i)[2].hex() +  cash.getFreezeItem(i)[3].hex()
+            pt = speck_dec(ct, k)
+            sel = cash.getFreezeItem(i)[4][0]
+            wallets[user]['coins'].append({
+                "s" : pt[0:64],
+                "val" : int(pt[120:128], 16),
+                "sel": sel
+            })
+
+    with open('.\wallets.json', 'w') as f:
+        json.dump(wallets, f)
+    f.close()
+
 def main():
-    #init_new_wallet("siqi")
-    #clean_wallet("siqi")
-    #s = mint("siqi", 1000000)
-    #s1, s2 = pour("siqi", s, "siqi", 600000, "siqi", 400000)
-    #s3 = freeze("siqi", s1, 1)
-    #s4 = freeze("siqi", s2, 2)
-    #compute("siqi", "1294baf117fd2449e3a889a980ccd86b29ec5fbe2db5deb2d11f6e51828eede6", "siqi")
-    #compute("siqi", "d54c2a8871db8d026c646859a53b16d7fa699247e3b8da2f8e6b7322bb31f4a0", "siqi")
-    finalize("siqi")
+    #init_new_wallet("Alice")
+    #init_new_wallet("Bob")
+    #init_new_wallet("Manager")
+    '''
+    clean_wallet("Alice")
+    clean_wallet("Bob")
+    clean_wallet("Manager")
+
+    s1 = mint("Alice", 1000000)
+    s2 = mint("Bob", 500000)
+    s3, s4 = pour("Alice", s1, "Bob", 300000, "Alice", 700000)
+    
+    s5 = freeze("Bob", s3, 1) # Bob freeze the coin s3 with value 300000 and in = 1 (paper)
+    s6 = freeze("Alice", s4, 2)  # Bob freeze the coin s4 with value 700000 and in = 2 (scissor)
+
+    compute("Alice", s6) 
+    compute("Bob", s5)
+
+    finalize("Manager")
+    
+    withdraw('Alice')
+    withdraw('Bob')
+    '''
+    pour("Alice", "78e010da8f013865bb8a33e4fcceee30df7bd74a172f3ee13845a7103f0fa6bb", "Alice", 100000, "Alice", 100000)

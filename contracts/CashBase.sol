@@ -580,6 +580,6 @@ interface Cashbase{
     function mint(bytes32 p, bytes32 s) external payable returns(uint);
     function pour(Proof memory proof, bytes32 sn1, bytes32 p1, bytes32 coin1, bytes32 p2, bytes32 coin2) external returns(uint);
     function freeze(Proof memory proof, bytes32 p, bytes32 sn, bytes32 cm) external;
-    function compute(Proof memory proof, bytes32 p, bytes32[2] memory ct) external;
+    function compute(Proof memory proof, bytes32 p, bytes32[2] memory ct, uint[4] memory epk_user) external;
     function finalize(Proof memory proof, uint32 out, bytes32[2] memory coin, bytes32[2][2] memory ct) external;
 }
