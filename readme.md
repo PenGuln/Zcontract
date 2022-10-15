@@ -79,4 +79,6 @@ Improve the Key generation.
 
 Optimize in advance.
 
+More convenient setup, decoupling.
+
 Interface.
