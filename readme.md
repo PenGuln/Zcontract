@@ -37,7 +37,7 @@ symmetric encryption: Speck (64/128, 27 rounds)
 
 #### Evaluation
 
-|  Primitives  | curcuit constraints |
+|  Primitives  | circuit constraints |
 |  ----  | ----  |
 | mint | - |
 | pour | 1034450 |
