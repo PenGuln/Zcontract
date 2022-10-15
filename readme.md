@@ -18,12 +18,40 @@ pipx install eth-brownie
 
 See https://github.com/Zokrates/ZoKrates
 
-3. Deploy your Smart Contract
+3. Compile your circuits
+```
+zokrates compile -i .\zokrates\pour.zok -o .\zokrates\pour
+zokrates compile -i .\zokrates\freeze.zok -o .\zokrates\freeze
+zokrates compile -i .\zokrates\compute.zok -o .\zokrates\compute
+zokrates compile -i .\zokrates\finalize.zok -o .\zokrates\finalize
+```
+
+4. Setup
+```
+zokrates setup -i .\zokrates\pour -p .\keys\pour_proving.key -v  .\keys\pour_verification.key
+zokrates setup -i .\zokrates\freeze -p .\keys\freeze_proving.key -v .\keys\freeze_verification.key
+zokrates setup -i .\zokrates\compute -p .\keys\compute_proving.key -v .\keys\compute_verification.key
+zokrates setup -i .\zokrates\finalize -p .\keys\finalize_proving.key -v .\keys\finalize_verification.key
+```
+
+5. Export verifier
+```
+zokrates export-verifier -i .\keys\pour_verification.key -o .\contracts\pour.sol
+zokrates export-verifier -i .\keys\freeze_verification.key -o .\contracts\freeze.sol
+zokrates export-verifier -i .\keys\compute_verification.key -o .\contracts\compute.sol
+zokrates export-verifier -i .\keys\finalize_verification.key -o .\contracts\finalize.sol
+```
+
+6. Copy Codes
+
+Copy the main part of each verifier, and paste it to CashBase.sol.
+
+7. Deploy your Smart Contract
 
 ```
 brownie run .\scripts\deploy.py --network your-network
 ```
-4. Run tests
+8. Run tests
 ```
 brownie run .\scripts\main.py --network your-network
 ```
