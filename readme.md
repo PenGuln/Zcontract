@@ -1,14 +1,54 @@
 # zcontract
 
 #### Introduction
-This is a simple implemention of HAWK, you can read the paper here https://eprint.iacr.org/2015/675.pdf. We realize the ZKP part using Zokrates, which is a amazing library helping connect zero-knowlegde-proof to Ethereum network. 
+This project is an implemention of Hawk, and contains a example of privacy-preserving Rock Scissor and Paper smart contract.
+
+you can read the paper of Hawk here https://eprint.iacr.org/2015/675.pdf. 
+
+The NIZK part is realized by Zokrates, a toolbox for zkSNARKs on Ethereum 
 
 #### How to use
 1. Install Brownie
+
+```
+pipx install eth-brownie
+```
+
 2. Install Zokrates
+
+See https://github.com/Zokrates/ZoKrates
+
+3. Deploy your Smart Contract
+
+```
+brownie run .\scripts\deploy.py --network your-network
+```
+4. Run tests
+```
+brownie run .\scripts\main.py --network your-network
+```
+#### Parameters
+
+For PRFs and commitments, we use SHA-256
+
+Diffie-Hellman key exchange: public key operations is performed in a SNARK-friendly prime-order subgroup of the Galois field extension, where µ=4, p is a 254-bit prime (see details in utils.py)
+
+symmetric encryption: Speck (64/128, 27 rounds)
 
 #### Evaluation
 
-The circuit of freeze contains 986435 constraints, compute contains 50564 constraints, finalize contains 196480 constraints.
+|  Primitives  | curcuit constraints | Time (field extension + speck) |
+|  ----  | ----  |  ----  |
+| mint | - |  |
+| pour | 1034450 |  |
+| freeze | 986435 |  |
+| compute | 163711 |  |
+| finalize | 231069 |  |
 
+#### Future work
 
+Improve the Key generation.
+
+Optimize in advance.
+
+Interface.

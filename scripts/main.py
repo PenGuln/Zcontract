@@ -364,27 +364,20 @@ def withdraw(user):
     f.close()
 
 def main():
-    #init_new_wallet("Alice")
-    #init_new_wallet("Bob")
-    #init_new_wallet("Manager")
-    '''
+    init_new_wallet("Alice")
+    init_new_wallet("Bob")
+    init_new_wallet("Manager")
     clean_wallet("Alice")
     clean_wallet("Bob")
     clean_wallet("Manager")
-
     s1 = mint("Alice", 1000000)
     s2 = mint("Bob", 500000)
     s3, s4 = pour("Alice", s1, "Bob", 300000, "Alice", 700000)
-    
     s5 = freeze("Bob", s3, 1) # Bob freeze the coin s3 with value 300000 and in = 1 (paper)
     s6 = freeze("Alice", s4, 2)  # Bob freeze the coin s4 with value 700000 and in = 2 (scissor)
-
     compute("Alice", s6) 
     compute("Bob", s5)
-
     finalize("Manager")
-    
     withdraw('Alice')
     withdraw('Bob')
-    '''
-    pour("Alice", "78e010da8f013865bb8a33e4fcceee30df7bd74a172f3ee13845a7103f0fa6bb", "Alice", 100000, "Alice", 100000)
+   
