@@ -18,6 +18,7 @@ from scripts.contractPriv import RSP
 import hashlib
 import subprocess
 import json
+import time
 
 def init_new_wallet(user: str):
     with open('.\wallets.json', 'r') as f:
@@ -80,12 +81,14 @@ def pour_generate_proof(root, sn, coin1, coin2,
                   hex_to_u32_list(s1) + [val1] + \
                   hex_to_u32_list(s2) + [val2]
     data = [str(x) for x in data]
-    print("generating proof...")
+    t = time.time()
+    print("generating proof(pour)...", )
     zok = subprocess.run(["zokrates", "compute-witness", "--verbose", "-i", ".\zokrates\pour", "-a"] + data, capture_output = True)
-    print(zok)
+    #print(zok)
     zok = subprocess.run(["zokrates", "generate-proof", "-i", ".\zokrates\pour", "-p", ".\keys\pour_proving.key"], capture_output = True)
-    print(zok)
+    #print(zok)
     print("proof generated")
+    print(time.time() - t)
 
 def freeze_generate_proof(root, sn, cm_, pk, sk, branch, sel, s, val, indata, k, s_):
     data = hex_to_u32_list(root + sn + cm_ + pk + sk)
@@ -96,32 +99,38 @@ def freeze_generate_proof(root, sn, cm_, pk, sk, branch, sel, s, val, indata, k,
         sel >>= 1
     data += hex_to_u32_list(s) + [val] + [indata] + hex_to_u32_list(k + s_)
     data = [str(x) for x in data]
-    print("generating proof...")
+    t = time.time()
+    print("generating proof(freeze)...")
     zok = subprocess.run(["zokrates", "compute-witness", "--verbose", "-i", ".\zokrates\\freeze", "-a"] + data, capture_output = True)
-    print(zok)
+    #print(zok)
     zok = subprocess.run(["zokrates", "generate-proof", "-i", ".\zokrates\\freeze", "-p", ".\keys\\freeze_proving.key"], capture_output = True)
-    print(zok)
+    #print(zok)
     print("proof generated")
+    print(time.time() - t)
 
 def compute_generate_proof(epk, cm, ct, val, indata, k, s, esk) :
     data = epk + hex_to_u32_list(cm + ct) + [val] + [indata] + hex_to_u32_list(k + s + esk)
     data = [str(x) for x in data]
-    print("generating proof...")
+    t = time.time()
+    print("generating proof(compute)...")
     zok = subprocess.run(["zokrates", "compute-witness", "--verbose", "-i", ".\zokrates\\compute", "-a"] + data, capture_output = True)
-    print(zok)
+    #print(zok)
     zok = subprocess.run(["zokrates", "generate-proof", "-i", ".\zokrates\\compute", "-p", ".\keys\\compute_proving.key"], capture_output = True)
-    print(zok)
+    #print(zok)
     print("proof generated")
+    print(time.time() - t)
 
 def finalize_generate_proof(out, cm, coin_, ct, s, val, indata, k, s_):
     data = [out] + hex_to_u32_list(cm[0] + cm[1] + coin_[0] + coin_[1] + ct[0] + ct[1] + s[0] + s[1]) + val + indata + hex_to_u32_list(k[0] + k[1] + s_[0] + s_[1])
     data = [str(x) for x in data]
-    print("generating proof...")
+    t = time.time()
+    print("generating proof(finalize)...")
     zok = subprocess.run(["zokrates", "compute-witness", "--verbose", "-i", ".\zokrates\\finalize", "-a"] + data, capture_output = True)
-    print(zok)
+    #print(zok)
     zok = subprocess.run(["zokrates", "generate-proof", "-i", ".\zokrates\\finalize", "-p", ".\keys\\finalize_proving.key"], capture_output = True)
-    print(zok)
+    #print(zok)
     print("proof generated")
+    print(time.time() - t)
 
 
 def mint(user: str, value : int):

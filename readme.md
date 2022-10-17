@@ -65,13 +65,13 @@ symmetric encryption: Speck (64/128, 27 rounds)
 
 #### Evaluation
 
-|  Primitives  | circuit constraints |
-|  ----  | ----  |
-| mint | - |
-| pour | 1034450 |
-| freeze | 986435 |
-| compute | 163711 |
-| finalize | 231069 |
+|  Primitives  | circuit constraints | Proof(s) |
+|  ----  | ----  | ---- |
+| mint | - | - |
+| pour | 1034450 | 60.62 |
+| freeze | 986435 | 59.19 |
+| compute | 163711 | 11.54 |
+| finalize | 231069 | 12.59 |
 
 #### Future work
 
