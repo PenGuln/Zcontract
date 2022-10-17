@@ -75,10 +75,6 @@ symmetric encryption: Speck (64/128, 27 rounds)
 
 #### Future work
 
-Improve the Key generation.
-
-Optimize in advance.
-
-More convenient setup, decoupling.
+Optimize in advance and more evaluation.
 
 Interface.
