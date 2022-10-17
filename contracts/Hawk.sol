@@ -22,7 +22,7 @@ contract Hawk is Cash.Cashbase {
     Cash.FreezeVerifier public freezeVerifier;
     Cash.ComputeVerifier public computeVerifier;
     Cash.FinalizeVerifier public finalizeVerifier;
-    Cash.WithdrawVerifier public withdrawVerifier;
+    //Cash.WithdrawVerifier public withdrawVerifier;
 
     bytes32[1 << (DEPTH + 1)] public hashes;
     uint public cur;
@@ -38,7 +38,7 @@ contract Hawk is Cash.Cashbase {
         Cash.FreezeVerifier _freezeVerifier, 
         Cash.ComputeVerifier _computeVerifier, 
         Cash.FinalizeVerifier _finalizeVerifier,
-        Cash.WithdrawVerifier _withdrawVerifier,
+        //Cash.WithdrawVerifier _withdrawVerifier,
         address _manager,
         uint[4] memory _epk
     ) {
@@ -47,7 +47,7 @@ contract Hawk is Cash.Cashbase {
         freezeVerifier = _freezeVerifier;
         computeVerifier = _computeVerifier;
         finalizeVerifier = _finalizeVerifier;
-        withdrawVerifier = _withdrawVerifier;
+        //withdrawVerifier = _withdrawVerifier;
         manager = _manager;
         epk = _epk;
         cur = 0;

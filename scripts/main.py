@@ -147,7 +147,7 @@ def mint(user: str, value : int):
     wallets[user]["coins"].append({
         "s" : s,
         "val" : value,
-        "sel": tx.return_value
+        "sel": cash.cur()-1
     })
 
     with open('.\wallets.json', 'w') as f:
@@ -170,16 +170,16 @@ def pour(user, s, user1, val1, user2, val2):
     for coin in coins:
         if (coin['s'] == s): 
             flag = True
-            val = coin['val']
-            sel = coin['sel']
+            val = coin['val'] # coin value
+            sel = coin['sel'] # merkle tree path
     assert(flag)
     assert(not s in spentcoins)
 
     assert(val == val1 + val2)
     account = get_account()
     cash = Hawk[-1]
-    root = cash.hashes(1).hex()
-    branch = cash.getBranch(sel)
+    root = cash.hashes(1).hex() # fetch the merkle tree root
+    branch = cash.getBranch(sel) # fetch the merkle tree branches
 
     sk = wallets[user]['sk']
     pk = wallets[user]['pk']
@@ -200,18 +200,18 @@ def pour(user, s, user1, val1, user2, val2):
                         s2, val2)
     with open('.\proof.json') as f:
         proof = json.load(f)
-    tx = cash.pour(list(proof['proof'].values()), sn, pk1, coin1, pk2, coin2, {"from": account})
+    tx = cash.pour(list(proof['proof'].values()), sn, pk1, coin1, pk2, coin2, {"from": account}) # send transaction
     wallets[user]['spentcoins'].append(s)
     wallets[user1]['coins'].append({
         "s" : s1,
         "val" : val1,
-        "sel": cash.cur()-2 # need to be fixed
+        "sel": cash.cur()-2
     })
 
     wallets[user2]['coins'].append({
         "s" : s2,
         "val" : val2,
-        "sel": cash.cur()-1 # need to be fixed
+        "sel": cash.cur()-1
     })
 
     with open('.\wallets.json', 'w') as f:
@@ -255,8 +255,8 @@ def freeze(user, s, indata):
         proof = json.load(f)
     tx = cash.freeze(list(proof['proof'].values()), pk, sn, cm_, {"from": account})
 
-    wallets[user]['spentcoins'].append(s)
-    wallets[user]['freezecoins'].append({
+    wallets[user]['spentcoins'].append(s) # the coin has been nullified
+    wallets[user]['freezecoins'].append({ # store the freezing coin data 
         "in" : indata,
         "cm" : cm_,
         "val" : val,
@@ -336,7 +336,7 @@ def finalize(manager):
     for i in range(2):
         rs = rds()
         _s.append(rs)                                                                         # sample randomness
-        _coin.append(hashlib.sha256(encodePacked(rs, int_to_hex(out_val[i]))).hexdigest()) 
+        _coin.append(hashlib.sha256(encodePacked(rs, int_to_hex(out_val[i]))).hexdigest())
         ct.append(speck_enc(rs + int_to_hex(0) * 7 + int_to_hex(out_val[i]),  k[i]))          # symmetric encrypion of the info of the new coin
 
     finalize_generate_proof(out, cm, _coin, ct, s, val, indata, k, _s)
@@ -357,12 +357,13 @@ def withdraw(user):
         for coin in wallets[user]['freezecoins']:
             if (coin['cm'] == cm): 
                 flag = True
-                k = coin['k']
+                k = coin['k'] 
         if (flag):
             ct = cash.getFreezeItem(i)[2].hex() +  cash.getFreezeItem(i)[3].hex()
-            pt = speck_dec(ct, k)
+            pt = speck_dec(ct, k) # symmetric decryption (speck)
+                                  # pt contains the info of the new coin
             sel = cash.getFreezeItem(i)[4][0]
-            wallets[user]['coins'].append({
+            wallets[user]['coins'].append({ # store the new coin in wallet
                 "s" : pt[0:64],
                 "val" : int(pt[120:128], 16),
                 "sel": sel
