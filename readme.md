@@ -18,7 +18,7 @@ pipx install eth-brownie
 
 See https://github.com/Zokrates/ZoKrates
 
-3. Compile your circuits
+3. Compile circuits
 ```
 zokrates compile -i .\zokrates\pour.zok -o .\zokrates\pour
 zokrates compile -i .\zokrates\freeze.zok -o .\zokrates\freeze
