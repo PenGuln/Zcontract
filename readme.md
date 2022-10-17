@@ -46,7 +46,7 @@ zokrates export-verifier -i .\keys\finalize_verification.key -o .\contracts\fina
 
 Copy the main part of each verifier, and paste it to CashBase.sol.
 
-7. Deploy your Smart Contract
+7. Deploy Smart Contract
 
 ```
 brownie run .\scripts\deploy.py --network your-network
