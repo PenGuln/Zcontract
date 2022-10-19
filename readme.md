@@ -1,11 +1,8 @@
 # zcontract
 
 #### Introduction
-This project is an implemention of Hawk, and contains a example of privacy-preserving Rock Scissor and Paper smart contract.
+This project is an implemention of [Hawk](https://eprint.iacr.org/2015/675.pdf.) using Zokrates, and contains a example of privacy-preserving Rock Scissor and Paper smart contract.
 
-you can read the paper of Hawk here https://eprint.iacr.org/2015/675.pdf. 
-
-The NIZK part is realized by Zokrates, a toolbox for zkSNARKs on Ethereum 
 
 #### How to use
 1. Install Brownie
